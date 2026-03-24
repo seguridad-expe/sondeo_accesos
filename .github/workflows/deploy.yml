@@ -1,0 +1,50 @@
+name: Desplegar Portal de Seguridad
+
+on:
+  push:
+    branches:
+      - main  # Se dispara en la rama principal
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Crear archivo env.js en secreto
+        run: |
+          mkdir -p js
+          cat << EOF > js/env.js
+          const ENV = Object.freeze({
+            GOOGLE_CLIENT_ID: '${{ secrets.GOOGLE_CLIENT_ID }}',
+            APPS_SCRIPT_URL: '${{ secrets.APPS_SCRIPT_URL }}',
+            ALLOWED_DOMAIN: 'experimentality.co'
+          });
+          EOF
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Empaquetar archivos
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
