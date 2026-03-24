@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sondeo de Validación de Accesos – Auditoría de Seguridad</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/index.css">
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" defer></script>
+  <!-- Variables de entorno -->
+  <script src="js/env.js"        defer></script>
+  <!-- Módulos de la aplicación -->
+  <script src="js/config.js"     defer></script>
+  <script src="js/views.js"      defer></script>
+  <script src="js/ui.js"         defer></script>
+  <script src="js/auth.js"       defer></script>
+  <script src="js/validation.js" defer></script>
+  <script src="js/apps.js"       defer></script>
+  <script src="js/submit.js"     defer></script>
+  <script src="js/main.js"       defer></script>
+</head>
+<body>
+  <div id="app">
+    <!-- El contenido se inyecta dinámicamente -->
+    <div style="height:100vh; display:flex; align-items:center; justify-content:center; background:var(--navy);">
+      <div style="color:var(--cyan); font-family:'IBM Plex Mono',monospace; font-size:14px; animation: pulse 1.5s infinite;">
+        Cargando sistema de auditoría...
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  </style>
+</body>
+</html>
