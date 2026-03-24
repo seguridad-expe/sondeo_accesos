@@ -111,14 +111,25 @@ const Validation = (() => {
         if (!ok) valid = false;
       });
 
-      // Texto: nombre del cliente (solo sección 3)
+      // Select: empresa (solo sección 3)
       if (isClient) {
-        const el = document.getElementById(uid + '_nombre');
+        const el = document.getElementById(uid + '_empresa');
         if (el) {
-          const ok = el.value.trim() !== '';
+          const ok = el.value !== '';
           _markField(el, ok);
-          _bindClear(el, 'input');
+          _bindClear(el, 'change');
           if (!ok) valid = false;
+
+          // Si es "OTRO", validar el campo de texto manual
+          if (el.value === 'OTRO') {
+            const elOtro = document.getElementById(uid + '_nombre_otro');
+            if (elOtro) {
+              const okOtro = elOtro.value.trim() !== '';
+              _markField(elOtro, okOtro);
+              _bindClear(elOtro, 'input');
+              if (!okOtro) valid = false;
+            }
+          }
         }
       }
 
