@@ -34,17 +34,22 @@ const Apps = (() => {
         </select>
       </div>`;
 
+    const clientField = !isClient 
+      ? `<input type="text" id="${uid}_empresa" value="EXPERIMENTALITY" readonly disabled style="background:rgba(255,255,255,0.02); color:var(--white-muted); cursor:not-allowed;">`
+      : `<select id="${uid}_empresa" class="form-select" style="padding:8px 32px 8px 10px; font-size:12px;" onchange="Apps.setOtroVisibility('${uid}')">
+          ${UI.buildClientesOptions('')}
+        </select>`;
+
     const clientSelect = `
       <div class="mini-field">
         <div class="mini-label">EMPRESA / CLIENTE <span class="required">*</span></div>
-        <select id="${uid}_empresa" class="form-select" style="padding:8px 32px 8px 10px; font-size:12px;" onchange="Apps.setOtroVisibility('${uid}')">
-          ${UI.buildClientesOptions(isClient ? '' : 'EXPERIMENTALITY')}
-        </select>
+        ${clientField}
       </div>
+      ${isClient ? `
       <div class="mini-field" id="otro_container_${uid}" style="display:none;">
         <div class="mini-label">NOMBRE DE LA EMPRESA <span class="required">*</span></div>
         <input type="text" id="${uid}_nombre_otro" placeholder="Escribe el nombre">
-      </div>`;
+      </div>` : ''}`;
 
     const commonFields = `
       ${clientSelect}

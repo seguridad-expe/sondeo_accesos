@@ -152,6 +152,9 @@ const Templates = {
             <label class="option-item"><input type="checkbox" name="appClient" value="VPN"><span>VPN del cliente</span></label>
             <label class="option-item"><input type="checkbox" name="appClient" value="VTEX"><span>VTEX</span></label>
             <label class="option-item"><input type="checkbox" name="appClient" value="AWS"><span>AWS</span></label>
+            <label class="option-item"><input type="checkbox" name="appClient" value="Azure"><span>Azure</span></label>
+            <label class="option-item"><input type="checkbox" name="appClient" value="Google GCP"><span>Google GCP</span></label>
+            <label class="option-item"><input type="checkbox" name="appClient" value="Figma"><span>Figma</span></label>
           </div>
         </div>
         <div class="app-detail-block" id="clientAppDetails"></div>
