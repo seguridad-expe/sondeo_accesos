@@ -21,9 +21,9 @@ const Apps = (() => {
   function _rowHTML(prefix, safe, rowIdx, isClient) {
     const uid = `${prefix}_${safe}_r${rowIdx}`;
     const rowLabel = isClient ? `PROYECTO ${rowIdx + 1}` : 'ACCESO';
-    
+
     const deleteBtn = rowIdx > 0
-      ? `<button type="button" onclick="Apps.removeClientRow('${prefix}','${safe}',${rowIdx})" class="btn-ghost" style="color:var(--red);padding:4px 8px;font-size:11px;float:right;">✕ Eliminar</button>` 
+      ? `<button type="button" onclick="Apps.removeClientRow('${prefix}','${safe}',${rowIdx})" class="btn-ghost" style="color:var(--red);padding:4px 8px;font-size:11px;float:right;">✕ Eliminar</button>`
       : '';
 
     const liderField = `
@@ -62,8 +62,8 @@ const Apps = (() => {
       <div class="mini-field">
         <div class="mini-label">TIPO DE CUENTA <span class="required">*</span></div>
         <div class="mini-option-group">
-          <label class="mini-option"><input type="radio" name="${uid}_cuenta" value="Individual"> Ind.</label>
-          <label class="mini-option"><input type="radio" name="${uid}_cuenta" value="Compartida"> Comp.</label>
+          <label class="mini-option"><input type="radio" name="${uid}_cuenta" value="Individual"> Individual</label>
+          <label class="mini-option"><input type="radio" name="${uid}_cuenta" value="Compartida"> Compartida</label>
         </div>
       </div>` : '';
 
@@ -101,7 +101,7 @@ const Apps = (() => {
       : app;
 
     const deleteBtn = isCustom
-      ? `<button type="button" onclick="Apps.removeCustomApp('${prefix}','${safe}')" class="btn-ghost" style="padding:4px 8px;font-size:11px;">✕ Quitar</button>` 
+      ? `<button type="button" onclick="Apps.removeCustomApp('${prefix}','${safe}')" class="btn-ghost" style="padding:4px 8px;font-size:11px;">✕ Quitar</button>`
       : '';
 
     const addBtn = isClient ? `
@@ -126,7 +126,7 @@ const Apps = (() => {
 
     const checked = [...document.querySelectorAll(`input[name="${name}"]:checked`)]
       .map(c => c.value);
-    
+
     const hasCustom = Object.keys(State.rowCounts).some(k => k.startsWith(`${prefix}_custom`));
 
     // Si no hay nada seleccionado, vaciamos y ponemos el botón de "Agregar otro"
@@ -225,7 +225,7 @@ const Apps = (() => {
         if (empresa === 'OTRO') empresa = gv('nombre_otro');
 
         results.push({
-          app: appName, empresa, proyecto: gv('proyecto'), rol: gv('rol'), lider: gv('lider'), 
+          app: appName, empresa, proyecto: gv('proyecto'), rol: gv('rol'), lider: gv('lider'),
           cuenta: rv('cuenta'), mfa: rv('mfa'), tipo: isClient ? 'Cliente' : 'Corporativo'
         });
       }
@@ -237,7 +237,7 @@ const Apps = (() => {
       const el = document.getElementById(`customname_${key}`);
       collect(safe, el ? el.value : 'App Personalizada');
     });
-    
+
     return results;
   }
 
