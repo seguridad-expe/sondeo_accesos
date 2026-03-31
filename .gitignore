@@ -6,3 +6,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# ── Google Apps Script ─────────────────────────────────────
+.clasp.json
+.gs
