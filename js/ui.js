@@ -55,7 +55,7 @@ const UI = (() => {
     }
 
     if (name === 'section2') {
-      Apps.bindCheckboxGroup('appCorp', 'corpAppDetails', false);
+      renderAppTable('corp');
     }
 
     if (name === 'section3') {
@@ -95,14 +95,16 @@ const UI = (() => {
 
     // 1. Restaurar checkboxes principales primero (Secciones 2 y 3)
     // Esto es CRÍTICO para que Apps.js pueda disparar la creación de tarjetas
-    if (sectionName === 'section2' || sectionName === 'section3') {
-      const name = sectionName === 'section2' ? 'appCorp' : 'appClient';
+    if (sectionName === 'section2') {
+      renderAppTable('corp');
+    }
+    if (sectionName === 'section3') {
+      const name = 'appClient';
       const savedValues = State.formData[name] || [];
       savedValues.forEach(val => {
         const cb = container.querySelector(`input[name="${name}"][value="${val}"]`);
         if (cb) {
           cb.checked = true;
-          // Disparamos manualmente el cambio para que Apps cree las tarjetas
           cb.dispatchEvent(new Event('change'));
         }
       });
@@ -160,9 +162,20 @@ const UI = (() => {
     return placeholder + CLIENTES.map(c => `<option value="${c}" ${c === selectedValue ? 'selected' : ''}>${c}</option>`).join('');
   }
 
+  function buildProyectosOptions(selectedValue) {
+    const placeholder = '<option value="" disabled ' + (!selectedValue ? 'selected' : '') + '>Selecciona un proyecto...</option>';
+    return placeholder + PROYECTOS.map(p => `<option value="${p}" ${p === selectedValue ? 'selected' : ''}>${p}</option>`).join('');
+  }
+
+  function buildAplicacionesOptions(selectedValue) {
+    const placeholder = '<option value="" disabled ' + (!selectedValue ? 'selected' : '') + '>Selecciona un aplicativo...</option>';
+    return placeholder + APLICACIONES.map(a => `<option value="${a}" ${a === selectedValue ? 'selected' : ''}>${a}</option>`).join('');
+  }
+
   function poblarSelectLider(id, val) { const el = document.getElementById(id); if (el) el.innerHTML = buildLideresOptions(val); }
   function poblarSelectCargo(id, val) { const el = document.getElementById(id); if (el) el.innerHTML = buildCargosOptions(val); }
   function poblarSelectArea(id, val) { const el = document.getElementById(id); if (el) el.innerHTML = buildAreasOptions(val); }
+  function poblarSelectProyecto(id, val) { const el = document.getElementById(id); if (el) el.innerHTML = buildProyectosOptions(val); }
 
   // ── Navegación y Progreso ───────────────────────────────
 
@@ -228,8 +241,8 @@ const UI = (() => {
       
       <div style="margin-bottom:15px;">
         <span style="color:var(--cyan);font-weight:700;">[ APPS SELECCIONADAS ]</span><br>
-        Corporativas: ${list('appCorp')}<br>
-        Clientes: ${list('appClient')}
+        Corporativas: ${(State.formData.appCorpRows || []).map(r => r.app).join(', ') || 'Ninguno'}<br>
+        Clientes: ${(State.formData.appClientRows || []).map(r => r.app).join(', ') || 'Ninguno'}
       </div>
 
       <div style="margin-bottom:15px;">
@@ -250,6 +263,176 @@ const UI = (() => {
     if (btn && cb) btn.disabled = !cb.checked;
   }
 
+  // ── Gestión de Modal y Tablas de Aplicativos ──────────────
+
+  function openAppModal(prefix) {
+    const modal = document.getElementById('appModal');
+    const leaderSelect = document.getElementById('modalLeader');
+    const projectSelect = document.getElementById('modalProject');
+    const appSelect = document.getElementById('modalAppNameSelect');
+    const prefixInput = document.getElementById('modalPrefix');
+    const modalTitle = document.getElementById('modalTitle');
+
+    if (prefixInput) prefixInput.value = prefix;
+    if (leaderSelect) leaderSelect.innerHTML = buildLideresOptions();
+    if (projectSelect) projectSelect.innerHTML = buildProyectosOptions();
+    if (appSelect) appSelect.innerHTML = buildAplicacionesOptions();
+    
+    // Poblar cliente select si es client
+    const clientSelect = document.getElementById('modalClient');
+    if (clientSelect) clientSelect.innerHTML = buildClientesOptions();
+
+    // Toggle secciones basadas en prefix
+    const isClient = prefix === 'client';
+    const clientSection = document.getElementById('modalClientSection');
+    const accountSection = document.getElementById('modalAccountTypeSection');
+    
+    if (clientSection) clientSection.style.display = isClient ? 'block' : 'none';
+    if (accountSection) accountSection.style.display = isClient ? 'block' : 'none';
+
+    if (modalTitle) {
+      modalTitle.textContent = isClient ? 'Nuevo Aplicativo de Cliente' : 'Nuevo Aplicativo Corporativo';
+    }
+
+    // Limpiar campos
+    ['modalAppNameSelect', 'modalAppName', 'modalProject', 'modalProjectManual', 'modalClient', 'modalClientManual', 'modalRole'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    
+    // Resetear radios
+    document.querySelectorAll('input[name="modalMFA"]').forEach(rb => rb.checked = false);
+    document.querySelectorAll('input[name="modalAccountType"]').forEach(rb => rb.checked = false);
+
+    // Ocultar campos manuales por defecto
+    ['modalAppNameManualContainer', 'modalProjectManualContainer', 'modalClientManualContainer'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
+    if (modal) modal.classList.add('active');
+  }
+
+  function toggleModalAppNameManual() {
+    const sel = document.getElementById('modalAppNameSelect');
+    const container = document.getElementById('modalAppNameManualContainer');
+    if (sel && container) {
+      container.style.display = (sel.value === 'OTRO') ? 'block' : 'none';
+    }
+  }
+
+  function toggleModalProjectManual() {
+    const sel = document.getElementById('modalProject');
+    const container = document.getElementById('modalProjectManualContainer');
+    if (sel && container) {
+      container.style.display = (sel.value === 'OTRO') ? 'block' : 'none';
+    }
+  }
+
+  function toggleModalClientManual() {
+    const sel = document.getElementById('modalClient');
+    const container = document.getElementById('modalClientManualContainer');
+    if (sel && container) {
+      container.style.display = (sel.value === 'OTRO') ? 'block' : 'none';
+    }
+  }
+
+  function closeAppModal() {
+    const modal = document.getElementById('appModal');
+    if (modal) modal.classList.remove('active');
+  }
+
+  function saveAppFromModal() {
+    const prefix = document.getElementById('modalPrefix').value;
+    const appSelect = document.getElementById('modalAppNameSelect').value;
+    let app = appSelect;
+    if (appSelect === 'OTRO') {
+      app = document.getElementById('modalAppName').value;
+    }
+
+    const projectSelect = document.getElementById('modalProject').value;
+    let project = projectSelect;
+    if (projectSelect === 'OTRO') {
+      project = document.getElementById('modalProjectManual').value;
+    }
+
+    const rol = document.getElementById('modalRole').value;
+    const lider = document.getElementById('modalLeader').value;
+    
+    const mfaChecked = document.querySelector('input[name="modalMFA"]:checked');
+    const mfa = mfaChecked ? mfaChecked.value : '';
+
+    // Datos extra para clientes
+    let empresa = 'EXPERIMENTALITY';
+    let cuenta = '';
+    if (prefix === 'client') {
+      const clientSelect = document.getElementById('modalClient').value;
+      empresa = clientSelect;
+      if (clientSelect === 'OTRO') {
+        empresa = document.getElementById('modalClientManual').value;
+      }
+      const accChecked = document.querySelector('input[name="modalAccountType"]:checked');
+      cuenta = accChecked ? accChecked.value : '';
+    }
+
+    if (!app || !project || !rol || !lider || !mfa || (prefix === 'client' && (!empresa || !cuenta))) {
+      alert('Por favor complete todos los campos obligatorios');
+      return;
+    }
+
+    const row = { 
+      app, project, rol, lider, mfa, empresa, cuenta, 
+      tipo: prefix === 'corp' ? 'Corporativo' : 'Cliente' 
+    };
+    
+    const key = prefix === 'corp' ? 'appCorpRows' : 'appClientRows';
+    if (!State.formData[key]) State.formData[key] = [];
+    State.formData[key].push(row);
+
+    closeAppModal();
+    renderAppTable(prefix);
+  }
+
+  function renderAppTable(prefix) {
+    const key = prefix === 'corp' ? 'appCorpRows' : 'appClientRows';
+    const container = document.getElementById(`${prefix}AppTableContainer`);
+    const body = document.getElementById(`${prefix}AppTableBody`);
+    const data = State.formData[key] || [];
+
+    if (!container || !body) return;
+
+    if (data.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+
+    container.style.display = 'block';
+    body.innerHTML = data.map((row, idx) => `
+      <tr>
+        <td>${row.app}</td>
+        ${prefix === 'client' ? `<td>${row.empresa}</td>` : ''}
+        <td>${row.project}</td>
+        <td>${row.rol}</td>
+        <td>${row.lider}</td>
+        ${prefix === 'client' ? `<td>${row.cuenta}</td>` : ''}
+        <td><span class="badge" style="background:${row.mfa === 'Si' ? 'rgba(0,184,122,0.1)' : 'rgba(255,71,87,0.1)'}; color:${row.mfa === 'Si' ? '#00b87a' : '#ff4757'};">${row.mfa}</span></td>
+        <td>
+          <button class="btn-delete" onclick="UI.deleteAppEntry('${prefix}', ${idx})">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function deleteAppEntry(prefix, index) {
+    const key = prefix === 'corp' ? 'appCorpRows' : 'appClientRows';
+    if (State.formData[key]) {
+      State.formData[key].splice(index, 1);
+      renderAppTable(prefix);
+    }
+  }
+
   return {
     loadView, buildLideresOptions, poblarSelectLider, poblarSelectCargo, poblarSelectArea,
     repoblarLideresEnCards: () => { }, // Obsoleto en este modelo
@@ -258,7 +441,8 @@ const UI = (() => {
       const el = document.getElementById('sobrantesContainer');
       if (el) el.style.display = show ? 'block' : 'none';
     },
-    checkDeclaration
+    checkDeclaration,
+    openAppModal, toggleModalAppNameManual, toggleModalProjectManual, toggleModalClientManual, closeAppModal, saveAppFromModal, renderAppTable, deleteAppEntry
   };
 
 })();

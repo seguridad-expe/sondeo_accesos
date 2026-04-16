@@ -57,6 +57,74 @@ const Templates = {
       
       <div id="formContent"></div>
     </div>
+
+    <!-- Modal Global para agregar aplicativos -->
+    <div id="appModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Nuevo Aplicativo</h3>
+          <button class="modal-close" onclick="UI.closeAppModal()">&times;</button>
+        </div>
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+          <input type="hidden" id="modalPrefix">
+          
+          <div id="modalClientSection" class="field" style="display:none;">
+            <label class="field-label">Empresa / Cliente <span class="required">*</span></label>
+            <select id="modalClient" class="form-select" onchange="UI.toggleModalClientManual()"></select>
+            <div id="modalClientManualContainer" style="display:none; margin-top:10px;">
+              <input type="text" id="modalClientManual" placeholder="Escribe el nombre de la empresa">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Nombre del Aplicativo <span class="required">*</span></label>
+            <select id="modalAppNameSelect" class="form-select" onchange="UI.toggleModalAppNameManual()"></select>
+            <div id="modalAppNameManualContainer" style="display:none; margin-top:10px;">
+              <input type="text" id="modalAppName" placeholder="Escribe el nombre del aplicativo">
+            </div>
+          </div>
+          
+          <div class="field">
+            <label class="field-label">Proyecto <span class="required">*</span></label>
+            <select id="modalProject" class="form-select" onchange="UI.toggleModalProjectManual()"></select>
+            <div id="modalProjectManualContainer" style="display:none; margin-top:10px;">
+              <input type="text" id="modalProjectManual" placeholder="Escribe el nombre del proyecto">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Rol / Acceso <span class="required">*</span></label>
+            <input type="text" id="modalRole" placeholder="Ej. Administrador, Visualizador">
+          </div>
+
+          <div class="field">
+            <label class="field-label">Líder Responsable <span class="required">*</span></label>
+            <select id="modalLeader" class="form-select"></select>
+          </div>
+
+          <div id="modalAccountTypeSection" class="field" style="display:none;">
+            <label class="field-label">Tipo de Cuenta <span class="required">*</span></label>
+            <div class="option-group inline">
+              <label class="option-item"><input type="radio" name="modalAccountType" value="Individual"><span>Individual</span></label>
+              <label class="option-item"><input type="radio" name="modalAccountType" value="Compartida"><span>Compartida</span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">¿MFA Habilitado? <span class="required">*</span></label>
+            <div class="option-group inline">
+              <label class="option-item"><input type="radio" name="modalMFA" value="Si"><span>Sí</span></label>
+              <label class="option-item"><input type="radio" name="modalMFA" value="No"><span>No</span></label>
+              <label class="option-item"><input type="radio" name="modalMFA" value="No sabe"><span>No sabe</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" onclick="UI.closeAppModal()">Cancelar</button>
+          <button class="btn btn-primary" onclick="UI.saveAppFromModal()">Agregar</button>
+        </div>
+      </div>
+    </div>
   `,
 
   section1: `
@@ -69,7 +137,7 @@ const Templates = {
         <div class="two-col">
           <div class="field">
             <label class="field-label">Nombre completo <span class="required">*</span></label>
-            <input type="text" id="nombreCompleto" required>
+            <input type="text" id="nombreCompleto" required disabled>
           </div>
           <div class="field">
             <label class="field-label">Documento de identidad <span class="required">*</span></label>
@@ -78,7 +146,7 @@ const Templates = {
         </div>
         <div class="field">
           <label class="field-label">Correo corporativo <span class="required">*</span></label>
-          <input type="email" id="correo" required>
+          <input type="email" id="correo" required disabled>
         </div>
         <div class="two-col">
           <div class="field">
@@ -113,24 +181,38 @@ const Templates = {
   `,
 
   section2: `
-    <div class="section-card active" id="section2">
+    <div class="section-card active fullscreen-view" id="section2">
       <div class="section-header">
         <div class="section-number">02</div>
         <div class="section-title-wrap"><h2>Aplicativos Corporativos</h2><p>Acceso a herramientas de la empresa</p></div>
       </div>
       <div class="section-body">
         <div class="field">
-          <label class="field-label">¿A cuáles aplicativos tiene acceso? <span class="badge">Selección múltiple</span></label>
-          <div class="option-group">
-            <label class="option-item"><input type="checkbox" name="appCorp" value="VTEX"><span>VTEX</span></label>
-            <label class="option-item"><input type="checkbox" name="appCorp" value="AWS"><span>AWS</span></label>
-            <label class="option-item"><input type="checkbox" name="appCorp" value="Azure"><span>Azure</span></label>
-            <label class="option-item"><input type="checkbox" name="appCorp" value="Google GCP"><span>Google GCP</span></label>
-            <label class="option-item"><input type="checkbox" name="appCorp" value="Figma"><span>Figma</span></label>
-          </div>
+          <label class="field-label">¿A cuáles aplicativos de Experimentality tienes acceso? <span class="badge">Registro por aplicativo</span></label>
+          <button type="button" class="btn btn-ghost" style="width:100%; justify-content:center; border-style:dashed;" onclick="UI.openAppModal('corp')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:8px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Agregar Aplicativo Corporativo
+          </button>
         </div>
-        <div class="app-detail-block" id="corpAppDetails"></div>
+        
+        <div id="corpAppTableContainer" class="app-table-container" style="display:none; margin-top:20px;">
+          <div class="app-detail-title">APLICATIVOS REGISTRADOS</div>
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th>Aplicativo</th>
+                <th>Proyecto</th>
+                <th>Rol</th>
+                <th>Líder</th>
+                <th>MFA</th>
+                <th style="width:40px;"></th>
+              </tr>
+            </thead>
+            <tbody id="corpAppTableBody"></tbody>
+          </table>
+        </div>
       </div>
+
       <div class="nav-buttons">
         <button class="btn btn-ghost" onclick="goPrev(2)">Anterior</button>
         <div class="step-dots" id="dots2"></div>
@@ -140,25 +222,40 @@ const Templates = {
   `,
 
   section3: `
-    <div class="section-card active" id="section3">
+    <div class="section-card active fullscreen-view" id="section3">
       <div class="section-header">
         <div class="section-number">03</div>
         <div class="section-title-wrap"><h2>Aplicativos del Cliente</h2><p>Acceso a herramientas del cliente</p></div>
       </div>
       <div class="section-body">
         <div class="field">
-          <label class="field-label">¿A cuáles aplicativos tiene acceso? <span class="badge">Selección múltiple</span></label>
-          <div class="option-group">
-            <label class="option-item"><input type="checkbox" name="appClient" value="VPN"><span>VPN del cliente</span></label>
-            <label class="option-item"><input type="checkbox" name="appClient" value="VTEX"><span>VTEX</span></label>
-            <label class="option-item"><input type="checkbox" name="appClient" value="AWS"><span>AWS</span></label>
-            <label class="option-item"><input type="checkbox" name="appClient" value="Azure"><span>Azure</span></label>
-            <label class="option-item"><input type="checkbox" name="appClient" value="Google GCP"><span>Google GCP</span></label>
-            <label class="option-item"><input type="checkbox" name="appClient" value="Figma"><span>Figma</span></label>
-          </div>
+          <label class="field-label">¿A cuáles aplicativos del cliente tiene acceso? <span class="badge">Registro por aplicativo</span></label>
+          <button type="button" class="btn btn-ghost" style="width:100%; justify-content:center; border-style:dashed;" onclick="UI.openAppModal('client')">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:8px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Agregar Aplicativo de Cliente
+          </button>
         </div>
-        <div class="app-detail-block" id="clientAppDetails"></div>
+        
+        <div id="clientAppTableContainer" class="app-table-container" style="display:none; margin-top:20px;">
+          <div class="app-detail-title">APLICATIVOS DE CLIENTE REGISTRADOS</div>
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th>Aplicativo</th>
+                <th>Cliente</th>
+                <th>Proyecto</th>
+                <th>Rol</th>
+                <th>Líder Responsable</th>
+                <th>Cuenta</th>
+                <th>MFA</th>
+                <th style="width:40px;"></th>
+              </tr>
+            </thead>
+            <tbody id="clientAppTableBody"></tbody>
+          </table>
+        </div>
       </div>
+
       <div class="nav-buttons">
         <button class="btn btn-ghost" onclick="goPrev(3)">Anterior</button>
         <div class="step-dots" id="dots3"></div>
