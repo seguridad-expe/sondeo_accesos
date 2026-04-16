@@ -33,21 +33,21 @@ const Submit = (() => {
     };
 
     // Mapeo Sección 2: Aplicativos Corporativos
-    const s2_raw = Apps.gatherDetails('appCorp', false);
+    const s2_raw = State.formData.appCorpRows || [];
     const seccion2_detalles = s2_raw.map(app => ({
       nombre: app.app,
       clienteAsociado: 'EXPERIMENTALITY',
-      proyectoAsociado: app.proyecto,
+      proyectoAsociado: app.project,
       rol: app.rol,
       mfa: app.mfa
     }));
 
     // Mapeo Sección 3: Aplicativos Clientes
-    const s3_raw = Apps.gatherDetails('appClient', true);
+    const s3_raw = State.formData.appClientRows || [];
     const seccion3_detalles = s3_raw.map(app => ({
       nombre: app.app,
-      nombreCliente: app.empresa, // Apps.js ya maneja el mapeo de "OTRO"
-      proyecto: app.proyecto,
+      nombreCliente: app.empresa, 
+      proyecto: app.project,
       rol: app.rol,
       liderResponsable: app.lider,
       tipoCuenta: app.cuenta,

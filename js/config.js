@@ -6,37 +6,57 @@ const CONFIG = Object.freeze({
   // Constantes de la app (no sensibles, sí van en repo)
   TOTAL_SECTIONS: 5,
 });
-
 // ── Lista de líderes ──────────────────────────────────────
-// Para agregar o quitar líderes, edita este array y haz push.
 const LIDERES = Object.freeze([
-  'Sebastian Cuervo Aransazo',
-  'Karen Johana Reyes Rivera',
+  'Amairany Yepez Gómez',
+  'Camilo Velasquez Restrepo',
   'Johan Stivens Carmona Giraldo',
+  'Juan Jose Martinez Velasquez',
+  'Juliana Quiroz Upegui',
+  'July Andrea Cardenas Montaño',
+  'Karen Johanna Reyes Rivera',
+  'Leon Dario Arango Amaya',
   'Maria Isabel Gomez Londoño',
+  'Saúl Naranjo Romero',
+  'Sebastian Cuervo Aransazo',
+  'Veronica Espinosa Artunduaga',
+  'Victoria Eugenia Loaiza Pérez',
+  'Yilmer Moreno Salas',
 ]);
 
 // ── Lista de cargos ────────────────────────────────────────
 const CARGOS = Object.freeze([
-  'Practicante Developer',
-  'Practicante QA',
-  'Practicante Frontend',
-  'Practicante UI/UX',
-  'Desarrollador Junior',
-  'Desarrollador Senior',
-  'Desarrollador Master',
-  'Líder Técnico / Tech Lead',
-  'Arquitecto de Software',
-  'Analista de QA / Testing',
-  'Diseñador UI/UX',
-  'Analista de Datos / Analítica',
-  'Desarrollador VTEX',
-  'Product Owner / Product Manager',
-  'Scrum Master / Project Manager',
-  'Nómina / Contabilidad',
-  'GGHH / Talento Humano',
-  'Director de Tecnología',
-  'Director Administrativo',
+  'Analista de Soporte',
+  'Analista Funcional e commerce',
+  'Aprendiz de Desarrollo de Software',
+  'Aprendiz de Diseño Gráfico',
+  'Arquitecto de Datos',
+  'Auxiliar Contable',
+  'CEO',
+  'Científico de Datos',
+  'Country Manager México',
+  'Country Manager Spain',
+  'Culture & People Specialist',
+  'Custumer Surces',
+  'Data Analyst',
+  'Data Engineer',
+  'Delivery Manager',
+  'Digital Marketing Specialist',
+  'Director de Producto',
+  'Director of Experience',
+  'Diseñadora Gráfica Publicitaria',
+  'Engineering Director',
+  'Financial & Administrative Director',
+  'Functional Specialist',
+  'Operations Director',
+  'Practicante de Desarrollo de Software',
+  'Presales & Functional Specialist',
+  'QA Analyst',
+  'Sale Developmen Representative',
+  'Scrum Master Delivery Manager',
+  'Software Developer',
+  'UX | UI Creative',
+  'UX | UI Creative Chapter Lead',
 ]);
 
 // ── Lista de áreas ─────────────────────────────────────────
@@ -66,6 +86,34 @@ const CLIENTES = Object.freeze([
   'BANCO DE BOGOTÁ',
   'ALKOSTO',
   'OTRO',
+]);
+
+// ── Lista de proyectos ────────────────────────────────────────
+const PROYECTOS = Object.freeze([
+  'EXPERIMENTALITY',
+  'TANAGER',
+  'SURA',
+  'SOLLA',
+  'EXITO',
+  'GRUPO NUTRESA',
+  'SURAMERICANA',
+  'BANCO DE BOGOTÁ',
+  'ALKOSTO',
+  'PIDEKY ESCALA',
+  'OTRO'
+]);
+
+// ── Lista de aplicaciones ─────────────────────────────────────
+const APLICACIONES = Object.freeze([
+  'VTEX',
+  'GOOGLE',
+  'MICROSOFT',
+  'SLACK',
+  'JIRA',
+  'CONFLUENCE',
+  'GITHUB',
+  'GITLAB',
+  'OTRO'
 ]);
 
 // ── Estado global de la aplicación ───────────────────────

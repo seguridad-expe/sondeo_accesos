@@ -1,6 +1,21 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  // Cargar la pantalla de login en el div #app 
-  await UI.loadView('login', 'app');
+  const isLocal = window.location.hostname === 'localhost' || 
+                  window.location.hostname === '127.0.0.1' || 
+                  window.location.protocol === 'file:';
+
+  if (isLocal) {
+    // Autologin para facilitar pruebas locales
+    State.googleUser = { 
+      name: 'Tester Local', 
+      email: 'tester.local@experimentality.co', 
+      picture: 'https://ui-avatars.com/api/?name=Tester+Local&background=0ea5a0&color=fff' 
+    };
+    await UI.loadView('form-shell', 'app');
+    await UI.loadView('section1', 'formContent');
+  } else {
+    // Producción: requerir Google Sign-In
+    await UI.loadView('login', 'app');
+  }
 });
 
 // ── Bridge: navegación ──────────────────────────────────────
