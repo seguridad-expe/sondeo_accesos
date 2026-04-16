@@ -39,13 +39,11 @@ const CAB_LIDERES = [
 
 // ============================================================
 // doGet — sirve la página de confirmación post-envío
-// (el iframe carga esta respuesta después del submit)
 // ============================================================
 function doGet(e) {
   return HtmlService.createHtmlOutput(`
     <!DOCTYPE html><html><body>
       <script>
-        // Notifica a la ventana padre que el envío fue exitoso
         try { window.top.postMessage('FORM_OK', '*'); } catch(e) {}
         try { window.parent.postMessage('FORM_OK', '*'); } catch(e) {}
       </script>
@@ -54,21 +52,21 @@ function doGet(e) {
 }
 
 // ============================================================
-// doPost — recibe datos del formulario
-// Acepta dos formatos:
-//   1. Form POST clásico: e.parameter.payload (JSON string)
-//   2. fetch JSON:        e.postData.contents  (JSON string)
+// doPost — ENTRY POINT REQUERIDO POR GOOGLE APPS SCRIPT
 // ============================================================
 function doPost(e) {
-  try {
-    // ── Parsear datos (soporta ambos formatos) ──────────────
-    let raw = '';
+  return procesarSondeo(e);
+}
 
+// ============================================================
+// procesarSondeo — recibe y guarda los datos
+// ============================================================
+function procesarSondeo(e) {
+  try {
+    let raw = '';
     if (e.parameter && e.parameter.payload) {
-      // Enviado por el form/iframe (campo hidden "payload")
       raw = e.parameter.payload;
     } else if (e.postData && e.postData.contents) {
-      // Enviado por fetch/XHR como JSON body
       raw = e.postData.contents;
     }
 
@@ -104,8 +102,8 @@ function doPost(e) {
         app.clienteAsociado  || 'Experimentality',
         app.proyectoAsociado || '',
         app.rol              || '',
-        '',  // líder responsable no aplica en corporativo
-        '',  // tipo de cuenta no aplica
+        app.liderResponsable || '', // Ahora incluye el líder capturado
+        '',  // tipo de cuenta
         app.mfa              || ''
       ]);
     });
@@ -136,7 +134,6 @@ function doPost(e) {
       data.declaracionAceptada ? 'Sí' : 'No'
     ]);
 
-    // ── Respuesta HTML (para el iframe) ─────────────────────
     return HtmlService.createHtmlOutput(`
       <!DOCTYPE html><html><body>
       <script>
@@ -147,7 +144,7 @@ function doPost(e) {
     `).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 
   } catch (err) {
-    console.error('doPost error:', err.message, err.stack);
+    console.error('procesarSondeo error:', err.message);
     return HtmlService.createHtmlOutput(`
       <!DOCTYPE html><html><body>
       <script>
@@ -159,9 +156,6 @@ function doPost(e) {
   }
 }
 
-// ============================================================
-// getOrCreate
-// ============================================================
 function getOrCreate(ss, name, headers) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
@@ -171,46 +165,27 @@ function getOrCreate(ss, name, headers) {
     range.setBackground('#0d1b2e');
     range.setFontColor('#2de8b0');
     range.setFontWeight('bold');
-    range.setFontFamily('Courier New');
-    range.setFontSize(10);
     sheet.setFrozenRows(1);
-    sheet.autoResizeColumns(1, headers.length);
   }
   return sheet;
 }
 
-// ============================================================
-// testScript — prueba manual desde el editor
-// ============================================================
 function testScript() {
   const testData = {
     postData: {
       contents: JSON.stringify({
         timestamp: new Date().toISOString(),
-        referencia: 'AUD-TEST003',
+        referencia: 'AUD-TEST-PROD',
         seccion1: {
-          documento: '9876543210', nombreCompleto: 'Test Usuario',
-          correo: 'test@experimentality.co', cargo: 'QA',
-          area: 'Tecnología', lider: 'Sebastian Cuervo Aransazo',
-          asignadoProyectos: 'Sí'
+          documento: '000', nombreCompleto: 'Prod Test',
+          correo: 'test@experimentality.co', cargo: 'Dev', area: 'Tech', lider: 'Lider Test', asignadoProyectos: 'No'
         },
-        seccion2_detalles: [
-          { nombre: 'VTEX', clienteAsociado: 'Experimentality',
-            proyectoAsociado: 'E-commerce', rol: 'Admin', mfa: 'Sí' }
-        ],
-        seccion3_detalles: [
-          { nombre: 'AWS', nombreCliente: 'Cliente X', proyecto: 'Infra',
-            rol: 'Developer', liderResponsable: 'Karen Johana Reyes Rivera',
-            tipoCuenta: 'Individual', mfa: 'No' }
-        ],
-        seccion4_seguridad: {
-          mismaContrasena: 'No', compartidoCredenciales: 'No',
-          accesosSobrantes: 'No', cualesAccesos: '', appsPersonales: 'Sí'
-        },
+        seccion2_detalles: [{ nombre: 'VTEX', proyectoAsociado: 'Test', rol: 'Admin', liderResponsable: 'Saúl Naranjo', mfa: 'Sí' }],
+        seccion3_detalles: [],
+        seccion4_seguridad: {},
         declaracionAceptada: true
       })
     }
   };
-  doPost(testData);
-  Logger.log('Test ejecutado — revisa las hojas del Sheet.');
+  procesarSondeo(testData);
 }

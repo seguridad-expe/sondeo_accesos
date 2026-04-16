@@ -39,6 +39,7 @@ const Submit = (() => {
       clienteAsociado: 'EXPERIMENTALITY',
       proyectoAsociado: app.project,
       rol: app.rol,
+      liderResponsable: app.lider, // Agregado
       mfa: app.mfa
     }));
 
