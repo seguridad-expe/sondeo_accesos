@@ -210,17 +210,22 @@ const Validation = (() => {
     }
 
     // Sección 2: apps corporativos
-    // ── Dispara al hacer clic en "Continuar" de sección 2 ──
     if (n === 2) {
-      const hasApps = _checkbox('appCorp');
+      const rows = State.formData.appCorpRows || [];
+      const hasApps = rows.length > 0;
+      if (!hasApps) {
+        alert('Por favor agrega al menos un aplicativo corporativo.');
+      }
       ok.push(hasApps);
-      if (hasApps) ok.push(_validateCards('corpAppDetails', false));
     }
 
     // Sección 3: apps de cliente
-    // ── Dispara al hacer clic en "Continuar" de sección 3 ──
     if (n === 3) {
-      const hasApps = _checkbox('appClient');
+      const rows = State.formData.appClientRows || [];
+      const hasApps = rows.length > 0;
+      if (!hasApps) {
+        alert('Por favor agrega al menos un aplicativo de cliente.');
+      }
       ok.push(hasApps);
       if (hasApps) ok.push(_validateCards('clientAppDetails', true));
     }
